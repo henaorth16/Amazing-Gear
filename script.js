@@ -85,8 +85,8 @@ function update() {
 
   for (let i = 0; i < pipeArr.length; i++) {
     const pipe = pipeArr[i];
-    pipe.y += velocityY * 1.8;
-    context.fillStyle = "#004543";
+    pipe.y += velocityY * 1.5;
+    context.fillStyle = "#006563";
     context.fillRect(pipe.x, pipe.y, pipe.width, pipe.height);
     if (!pipe.passed && gear.y < pipe.y) {
       score += 0.5;
@@ -100,7 +100,7 @@ function update() {
     pipeArr.shift()
   }
   console.log(pipeArr);
-  context.fillStyle = "white";
+  context.fillStyle = "black";
   context.font = "30px sans-serif";
   context.fillText(score, 9, 33);
 
