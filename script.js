@@ -82,26 +82,29 @@ function update() {
     gameOver = true;
   }
   // pipes
+
   for (let i = 0; i < pipeArr.length; i++) {
     const pipe = pipeArr[i];
-    pipe.y += velocityY * 1.1;
+    pipe.y += velocityY * 1.8;
     context.fillStyle = "#004543";
     context.fillRect(pipe.x, pipe.y, pipe.width, pipe.height);
-    if (pipe.y >= boardHeight) {
-      pipeArr.shift();
-    }
-    if(!pipe.passed && gear.y < pipe.y){
-        score += 0.5
-        pipe.passed = true
+    if (!pipe.passed && gear.y < pipe.y) {
+      score += 0.5;
+      pipe.passed = true;
     }
     if (detectCollusion(gear, pipe)) {
       gameOver = true;
     }
   }
+  while (pipeArr.length > 0 && pipeArr[0].y > boardHeight) {
+    pipeArr.shift()
+  }
   console.log(pipeArr);
-  context.fillStyle = "white"
+  context.fillStyle = "white";
   context.font = "30px sans-serif";
-  context.fillText(score, 9, 33)
+  context.fillText(score, 9, 33);
+
+  gameOver ? context.fillText("Game Over", 10, 63) : "";
 }
 
 function placePipes() {
@@ -118,7 +121,7 @@ function placePipes() {
     height: pipeHeight,
     passed: false,
   };
-  velocityY *= 1.0002;
+  velocityY *= 1.007;
 
   pipeArr.push(rightPipe);
   let leftPipe = {
@@ -134,13 +137,12 @@ function placePipes() {
 function moveGear(e) {
   if (e.code == "ArrowLeft" || e.clientX <= window.innerHeight / 2) {
     velocityLeft = -2;
-  velocityJump = -6;
-  gameOver ? gameOvercheck() : ""
-
+    velocityJump = -6;
+    gameOver ? gameOvercheck() : "";
   } else if (e.code == "ArrowRight" || e.clientX > window.innerWidth / 2) {
     velocityLeft = 2;
     velocityJump = -6;
-    gameOver ? gameOvercheck() : ""
+    gameOver ? gameOvercheck() : "";
   }
 }
 
@@ -153,10 +155,13 @@ function detectCollusion(a, b) {
   );
 }
 function gameOvercheck() {
-    gear.x = gearX;
-    gear.y = gearY;
-    pipeArr = []; 
-    score = 0;
-    gameOver = false 
-
+  gear.x = gearX;
+  gear.y = gearY;
+  pipeArr = [];
+  score = 0;
+  velocityY = 2; // the pipes movind down speed
+  velocityJump = 0;
+  gravity = 0.4;
+  velocityLeft = 0;
+  gameOver = false;
 }
