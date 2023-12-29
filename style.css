@@ -1,0 +1,16 @@
+*{
+    margin: 0;
+    padding: 0;
+}
+body{
+    text-align: center;
+    background-color: rgb(4, 37, 26);
+}
+h1{
+    margin: .5rem;
+    font-family: sans-serif;
+    color: rgb(215, 250, 241);
+}
+#board{
+    background-color: aquamarine;
+}
