@@ -1,6 +1,6 @@
 # AMAZING GEAR GAME CLONNING WITH JAVASCRIPT
 
-![Preview image](image.png)
+![Preview image](screenshot.png)
 
 ### Preview
 #### [Live Preview](https://amazing-gear.netlify.app/)
