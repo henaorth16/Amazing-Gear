@@ -107,6 +107,8 @@ function update() {
   gameOver ? context.fillText("Game Over", 10, 63) : "";
 }
 
+
+
 function placePipes() {
   let max = pipeX - (pipeWidth - 50);
   let min = pipeX - 84;
