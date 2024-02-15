@@ -1,5 +1,5 @@
 # AMAZING GEAR GAME CLONNING WITH JAVASCRIPT
-
+---
 ![Preview image](screenshot.png)
 
 ### Preview
