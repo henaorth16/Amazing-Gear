@@ -3,7 +3,7 @@
 ![Preview image](screenshot.png)
 
 ### Preview
-#### [Live Preview](https://amazing-gear.netlify.app/)
+#### [Live Preview](https://amazing-gear.netlify.app/) ** //For Desktop Users** 
 
 
 ### How to Use?
