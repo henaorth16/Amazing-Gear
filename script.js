@@ -1,15 +1,15 @@
 //board
-
+let announce = document.querySelector(".gameover")
 let board;
 let boardWidth = 360;
-let boardHeight = 620;
+let boardHeight = 600;
 let context;
 
 //gear
 let gearWidth = 40;
 let gearHeight = 40;
 let gearX = boardWidth / 2;
-let gearY = boardHeight / 1.5;
+let gearY = boardHeight / 1.8;
 let gearImg;
 
 let gear = {
@@ -20,34 +20,31 @@ let gear = {
 };
 
 //draw_walls
-let pipeArr = [];
-let pipeWidth = boardWidth;
-let pipeHeight = 45;
-let pipeX = 0;
-let pipeY = pipeHeight * -1;
+let blockArr = [];
+let blockWidth = boardWidth;
+let blockHeight = 45;
+let blockX = 0;
+let blockY = blockHeight * -1;
 
-let rightPipeImg;
-let leftPipeImg;
+let rightblockImg;
+let leftblockImg;
 
 //physics
-let velocityY = 2; // the pipes movind down speed
+let velocityY = 2; // the blocks movind down speed
 let velocityJump = 0;
 let gravity = 0.4;
 let velocityLeft = 0;
 
 let gameOver = false;
 let score = 0;
-
+let highScore = 0
 window.onload = function () {
   board = document.getElementById("board");
   board.height = boardHeight;
   board.width = boardWidth;
   context = board.getContext("2d"); //this allows us to draw on the board
 
-  //draw the gear
-  //   context.fillStyle = "black";
-  //   context.fillRect(gear.x, gear.y, gear.width, gear.height);
-
+ 
   gearImg = new Image();
   gearImg.src = "./gear.webp";
   gearImg.onload = function () {
@@ -55,14 +52,15 @@ window.onload = function () {
   };
   gear.x += velocityLeft;
   requestAnimationFrame(update);
-  setInterval(placePipes, 2300);
+  setInterval(placeblocks, 2300);
   document.addEventListener("keydown", moveGear);
-  document.addEventListener("click", moveGear);
 };
 
 function update() {
   requestAnimationFrame(update);
   if (gameOver) {
+    announce.style.display="block"
+    updateHighScore()
     return;
   }
   context.clearRect(0, 0, board.width, board.height);
@@ -78,72 +76,73 @@ function update() {
 
   context.drawImage(gearImg, gear.x, gear.y, gear.width, gear.height);
 
-  if (gear.y > board.height) {
+  if (gear.y >= board.height - gearHeight || gear.y <= 0) {
     gameOver = true;
   }
-  // pipes
+  // blocks
 
-  for (let i = 0; i < pipeArr.length; i++) {
-    const pipe = pipeArr[i];
-    pipe.y += velocityY * 1.5;
+  for (let i = 0; i < blockArr.length; i++) {
+    const block = blockArr[i];
+    block.y += velocityY * 1.5;
     context.fillStyle = "#006563";
-    context.fillRect(pipe.x, pipe.y, pipe.width, pipe.height);
-    if (!pipe.passed && gear.y < pipe.y) {
+    context.fillRect(block.x, block.y, block.width, block.height);
+    if (!block.passed && gear.y < block.y) {
       score += 0.5;
-      pipe.passed = true;
+      block.passed = true;
     }
-    if (detectCollusion(gear, pipe)) {
+    if (detectCollusion(gear, block)) {
       gameOver = true;
     }
   }
-  while (pipeArr.length > 0 && pipeArr[0].y > boardHeight) {
-    pipeArr.shift()
+  while (blockArr.length > 0 && blockArr[0].y > boardHeight) {
+    blockArr.shift()
   }
-  console.log(pipeArr);
   context.fillStyle = "black";
-  context.font = "30px sans-serif";
-  context.fillText(score, 9, 33);
-
-  gameOver ? context.fillText("Game Over", 10, 63) : "";
+  context.font = "20px sans-serif";
+  context.fillText(score, 10, 27);
+ highScore = localStorage.getItem("highScore")
+  gameOver && context.fillText(`Game Over      High Score ${Math.max(highScore, score)}`, 10, 63);
 }
 
 
 
-function placePipes() {
-  let max = pipeX - (pipeWidth - 50);
-  let min = pipeX - 84;
+function placeblocks() {
+  let max = blockX - (blockWidth - 50);
+  let min = blockX - 84;
 
-  let ramdomPipeX = Math.random() * (max - min) + min;
-  let openingSpace = (boardWidth - 150) / 4.9 / (velocityY / 5);
+  let ramdomblockX = Math.random() * (max - min) + min;
+  let openingSpace = (boardWidth - 150) / 4.9 / (velocityY / 5); // the opening space becomes narrow and narrow
 
-  let rightPipe = {
-    x: ramdomPipeX,
-    y: pipeY,
-    width: pipeWidth,
-    height: pipeHeight,
+  let rightblock = {
+    x: ramdomblockX,
+    y: blockY,
+    width: blockWidth,
+    height: blockHeight,
     passed: false,
   };
   velocityY *= 1.007;
 
-  pipeArr.push(rightPipe);
-  let leftPipe = {
-    x: ramdomPipeX + pipeWidth + openingSpace,
-    y: pipeY,
-    width: pipeWidth,
-    height: pipeHeight,
+  blockArr.push(rightblock);
+  let leftblock = {
+    x: ramdomblockX + blockWidth + openingSpace,
+    y: blockY,
+    width: blockWidth,
+    height: blockHeight,
     passed: false,
   };
-  pipeArr.push(leftPipe);
+  blockArr.push(leftblock);
 }
 
 function moveGear(e) {
-  if (e.code == "ArrowLeft" || e.clientX <= window.innerHeight / 2) {
+  if (e.code == "ArrowLeft") {
     velocityLeft = -2;
     velocityJump = -6;
-    gameOver ? gameOvercheck() : "";
-  } else if (e.code == "ArrowRight" || e.clientX > window.innerWidth / 2) {
+  } else if (e.code == "ArrowRight") {
     velocityLeft = 2;
     velocityJump = -6;
+  }else if (e.code == "ArrowUp") {
+    velocityJump = -6;
+  }else if(e.code == "Space"){
     gameOver ? gameOvercheck() : "";
   }
 }
@@ -157,13 +156,25 @@ function detectCollusion(a, b) {
   );
 }
 function gameOvercheck() {
+  announce.style.display = "none"
   gear.x = gearX;
   gear.y = gearY;
-  pipeArr = [];
+  blockArr = [];
   score = 0;
-  velocityY = 2; // the pipes movind down speed
+  velocityY = 2; // the blocks moving down speed
   velocityJump = 0;
   gravity = 0.4;
   velocityLeft = 0;
   gameOver = false;
+}
+
+function updateHighScore() {
+  const currentHighScore = highScore || 0;
+  
+  if (score > currentHighScore) {
+    localStorage.setItem('highScore', score);
+    console.log(`New high score: ${score}`);
+  } else {
+    console.log(`High score remains: ${currentHighScore}`);
+  }
 }
