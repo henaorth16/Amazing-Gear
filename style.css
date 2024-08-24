@@ -5,6 +5,7 @@
 body{
     height: 100vh;
     overflow: hidden;
+    font-family: verdana;
     text-align: center;
     background-color: rgb(4, 37, 26);
 }
@@ -18,7 +19,6 @@ h1{
     background-color: aquamarine;
 }
 .gameover{
-    font-family: verdana;
     color: #f00;
     position: absolute;
     top: 50%;
@@ -28,7 +28,8 @@ h1{
 }
 .footer{
     width: 100%;
-    background-color: #418812;
+    background-color: #04251a;
+    color: #fff;
     position: absolute;
     bottom: 0;
     padding: 5px;
