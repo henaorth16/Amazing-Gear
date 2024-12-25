@@ -9,7 +9,8 @@
 ### How to Use?
 
 - Simply open the `index.html` file in a web browser.
-- use right and left arrow key of your keyboard to move up and restart the game.
+- use right and left arrow key of your keyboard to move up.
+- use space key to restart the game
 - It is not fully working on mobile devices. so recommended to use desktop.
 
 
