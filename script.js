@@ -37,7 +37,7 @@ let velocityLeft = 0;
 const jumpAudio = new Audio("./audios/jump.wav");
 const failAudio = new Audio("./audios/fail.wav");
 const passAudio = new Audio("./audios/pass.mp3");
-passAudio.volume = 0.6;
+passAudio.volume = 0.9;
 failAudio.volume = 0.4;
 jumpAudio.volume = 0.6;
 let clrRandom = 0
@@ -98,8 +98,8 @@ function update() {
       "#CAAAAA",
       "#fc6471",
     ];
-    context.fillRect(block.x, block.y, block.width, block.height);
     context.fillStyle = clrList[clrRandom];
+    context.fillRect(block.x, block.y, block.width, block.height);
     if (!block.passed && gear.y < block.y) {
       passAudio.play();
       score += 0.5;
@@ -190,9 +190,7 @@ function gameOvercheck() {
   gravity = 0.4;
   velocityLeft = 0;
   gameOver = false;
-  passAudio.volume = 0.4;
-  failAudio.volume = 0.4;
-  jumpAudio.volume = 0.6;
+ 
 }
 
 function updateHighScore() {
