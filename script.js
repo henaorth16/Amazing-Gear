@@ -1,5 +1,5 @@
 //board
-let announce = document.querySelector(".gameover")
+let announce = document.querySelector(".gameover");
 let board;
 let boardWidth = 360;
 let boardHeight = 600;
@@ -34,10 +34,22 @@ let velocityY = 2; // the blocks movind down speed
 let velocityJump = 0;
 let gravity = 0.4;
 let velocityLeft = 0;
-
+const jumpAudio = new Audio("./audios/jump.wav");
+const failAudio = new Audio("./audios/fail.wav");
+const passAudio = new Audio("./audios/pass.mp3");
+passAudio.volume = 0.6;
+failAudio.volume = 0.4;
+jumpAudio.volume = 0.6;
+let clrRandom = 0
 let gameOver = false;
 let score = 0;
-let highScore = 0
+let highScore = 0;
+ gearImg = new Image();
+  gearImg.src = "./gear.webp";
+  gearImg.onload = function () {
+    context.drawImage(gearImg, gear.x, gear.y, gear.width, gear.height);
+  };
+  gear.x += velocityLeft;
 window.onload = function () {
   board = document.getElementById("board");
   board.height = boardHeight;
@@ -45,12 +57,6 @@ window.onload = function () {
   context = board.getContext("2d"); //this allows us to draw on the board
 
  
-  gearImg = new Image();
-  gearImg.src = "./gear.webp";
-  gearImg.onload = function () {
-    context.drawImage(gearImg, gear.x, gear.y, gear.width, gear.height);
-  };
-  gear.x += velocityLeft;
   requestAnimationFrame(update);
   setInterval(placeblocks, 2300);
   document.addEventListener("keydown", moveGear);
@@ -59,8 +65,9 @@ window.onload = function () {
 function update() {
   requestAnimationFrame(update);
   if (gameOver) {
-    announce.style.display="block"
-    updateHighScore()
+    announce.style.display = "block";
+    updateHighScore();
+
     return;
   }
   context.clearRect(0, 0, board.width, board.height);
@@ -84,35 +91,49 @@ function update() {
   for (let i = 0; i < blockArr.length; i++) {
     const block = blockArr[i];
     block.y += velocityY * 1.5;
-    context.fillStyle = "#006563";
+    const clrList = [
+      "#55d6be",
+      "#acfcd9",
+      "#7d5ba6",
+      "#CAAAAA",
+      "#fc6471",
+    ];
     context.fillRect(block.x, block.y, block.width, block.height);
+    context.fillStyle = clrList[clrRandom];
     if (!block.passed && gear.y < block.y) {
+      passAudio.play();
       score += 0.5;
       block.passed = true;
     }
     if (detectCollusion(gear, block)) {
+      failAudio.play();
       gameOver = true;
     }
   }
   while (blockArr.length > 0 && blockArr[0].y > boardHeight) {
-    blockArr.shift()
+    blockArr.shift();
   }
   context.fillStyle = "black";
   context.font = "20px sans-serif";
   context.fillText(score, 10, 27);
- highScore = localStorage.getItem("highScore")
-  gameOver && context.fillText(`Game Over      High Score ${Math.max(highScore, score)}`, 10, 63);
+  highScore = localStorage.getItem("highScore");
+  gameOver &&
+    context.fillText(
+      `Game Over      High Score ${Math.max(highScore, score)}`,
+      10,
+      63
+    );
 }
 
-
-
 function placeblocks() {
-  let max = blockX - (blockWidth - 50);
+  let max = blockX - (blockWidth - 10);
   let min = blockX - 84;
 
+  clrRandom = Math.floor(Math.random() * 5);
+  
   let ramdomblockX = Math.random() * (max - min) + min;
   let openingSpace = (boardWidth - 150) / 4.9 / (velocityY / 5); // the opening space becomes narrow and narrow
-
+  
   let rightblock = {
     x: ramdomblockX,
     y: blockY,
@@ -121,7 +142,7 @@ function placeblocks() {
     passed: false,
   };
   velocityY *= 1.007;
-
+  
   blockArr.push(rightblock);
   let leftblock = {
     x: ramdomblockX + blockWidth + openingSpace,
@@ -134,15 +155,18 @@ function placeblocks() {
 }
 
 function moveGear(e) {
-  if (e.code == "ArrowLeft") {
+  if (e.code == "ArrowLeft" && !gameOver) {
+    jumpAudio.play();
     velocityLeft = -2;
     velocityJump = -6;
-  } else if (e.code == "ArrowRight") {
+  } else if (e.code == "ArrowRight" && !gameOver) {
+    jumpAudio.play();
     velocityLeft = 2;
     velocityJump = -6;
-  }else if (e.code == "ArrowUp") {
+  } else if (e.code == "ArrowUp" && !gameOver) {
+    jumpAudio.play();
     velocityJump = -6;
-  }else if(e.code == "Space"){
+  } else if (e.code == "Space") {
     gameOver ? gameOvercheck() : "";
   }
 }
@@ -156,7 +180,7 @@ function detectCollusion(a, b) {
   );
 }
 function gameOvercheck() {
-  announce.style.display = "none"
+  announce.style.display = "none";
   gear.x = gearX;
   gear.y = gearY;
   blockArr = [];
@@ -166,13 +190,16 @@ function gameOvercheck() {
   gravity = 0.4;
   velocityLeft = 0;
   gameOver = false;
+  passAudio.volume = 0.4;
+  failAudio.volume = 0.4;
+  jumpAudio.volume = 0.6;
 }
 
 function updateHighScore() {
   const currentHighScore = highScore || 0;
-  
+
   if (score > currentHighScore) {
-    localStorage.setItem('highScore', score);
+    localStorage.setItem("highScore", score);
     console.log(`New high score: ${score}`);
   } else {
     console.log(`High score remains: ${currentHighScore}`);

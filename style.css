@@ -7,7 +7,7 @@ body{
     overflow: hidden;
     font-family: verdana;
     text-align: center;
-    background-color: rgb(4, 37, 26);
+    background-color: rgb(8, 14, 12);
 }
 h1{
     margin: .5rem;
@@ -16,7 +16,7 @@ h1{
 }
 #board{
     max-height: 100vh;
-    background-color: aquamarine;
+    background-color: rgb(235, 251, 246);
 }
 .gameover{
     color: #f00;
@@ -28,7 +28,7 @@ h1{
 }
 .footer{
     width: 100%;
-    background-color: #04251a;
+    background-color: rgb(8, 14, 12);
     color: #fff;
     position: absolute;
     bottom: 0;
